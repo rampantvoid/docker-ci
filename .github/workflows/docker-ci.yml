@@ -19,5 +19,27 @@ jobs:
       - name: Build Docker image
         run: docker build -t myapp:latest .
 
-      - name: Run Docker image
-        run: docker run myapp:latest
+      - name: Run Docker image and perform health check
+        run: |
+          container_id=$(docker run -d myapp:latest)
+          echo "Container started with ID: $container_id"
+
+          # Wait for the container to start up (adjust sleep time as needed)
+          sleep 10
+
+          # Perform a health check (adjust as needed for your app)
+          if docker exec $container_id node -e "console.log('Health check passed')"; then
+            echo "Health check passed"
+          else
+            echo "Health check failed"
+            exit 1
+          fi
+
+          # Stop and remove the container
+          docker stop $container_id
+          docker rm $container_id
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker image rm myapp:latest || true
