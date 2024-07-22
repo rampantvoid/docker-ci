@@ -1,22 +1,23 @@
-name: Deploy to AWS EC2
+name: Run Node.js Server on AWS EC2
 
 on:
   push:
     branches: [main]
 
 jobs:
-  deploy:
+  run-server:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: "14.x"
 
-      - name: Deploy to EC2
+      - name: Run server on EC2
         env:
           PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           HOST: ${{ secrets.EC2_HOST }}
@@ -27,5 +28,9 @@ jobs:
             cd docker-ci/ &&
             git pull origin main &&
             cd src/ &&
-            node index.js
+            nohup node index.js > output.log 2>&1 &
+            echo "Server started successfully"
           '
+
+      - name: Mark job as complete
+        run: echo "Server is running. Job complete!"
