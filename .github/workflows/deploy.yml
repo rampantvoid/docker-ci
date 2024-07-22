@@ -17,7 +17,7 @@ jobs:
         env:
           PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           HOST: ${{ secrets.EC2_HOST }}
-          USER: ${{ secrets.EC2_USER }}
+          USER: ${{ secrets.EC2_USERNAME }}
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           scp -i private_key -o StrictHostKeyChecking=no -r ./* ${USER}@${HOST}:~/docker-ci/
