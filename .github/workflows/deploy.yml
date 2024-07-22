@@ -27,6 +27,5 @@ jobs:
             cd docker-ci/ &&
             git pull origin main &&
             cd src/ &&
-            npm install &&
             node index.js
           '
